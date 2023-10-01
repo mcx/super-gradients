@@ -1,9 +1,10 @@
 from typing import Union, List, Tuple
 
 from omegaconf import DictConfig
-from torch import Tensor
+from torch import Tensor, nn
 
 from super_gradients.common.registry import register_detection_module
+from super_gradients.modules import Conv
 from super_gradients.modules.detection_modules import BaseDetectionModule
 from super_gradients.training.utils.utils import HpmStruct
 import super_gradients.common.factories.detection_modules_factory as det_factory
@@ -42,10 +43,11 @@ class YoloNASPANNeckWithC2(BaseDetectionModule):
         self.neck2 = factory.get(factory.insert_module_param(neck2, "in_channels", [self.neck1.out_channels[1], c3_out_channels, c2_out_channels]))
         self.neck3 = factory.get(factory.insert_module_param(neck3, "in_channels", [self.neck2.out_channels[1], self.neck2.out_channels[0]]))
         self.neck4 = factory.get(factory.insert_module_param(neck4, "in_channels", [self.neck3.out_channels, self.neck1.out_channels[0]]))
-
+        self.neck5 = Conv(self.neck4.out_channels, self.neck4.out_channels, kernel=3, padding=1, stride=2, activation_type=nn.ReLU)
         self._out_channels = [
             self.neck2.out_channels[1],
             self.neck3.out_channels,
+            self.neck4.out_channels,
             self.neck4.out_channels,
         ]
 
@@ -60,5 +62,5 @@ class YoloNASPANNeckWithC2(BaseDetectionModule):
         x_n2_inter, p3 = self.neck2([x, c3, c2])
         p4 = self.neck3([p3, x_n2_inter])
         p5 = self.neck4([p4, x_n1_inter])
-
-        return p3, p4, p5
+        p6 = self.neck5(p5)
+        return p3, p4, p5, p6
