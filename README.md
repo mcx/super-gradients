@@ -249,7 +249,7 @@ model = models.get("model-name", pretrained_weights="pretrained-model-name")
 
 <table class="tfo-notebook-buttons" align="left">
     <td width="500">   
-        <a target="_blank" href="https://colab.research.google.com/drive/1NMGzx8NdycIZqnRlZKJZrIOqyj0MFzJE#scrollTo=3UZJqTehg0On">
+        <a target="_blank" href="https://colab.research.google.com/github/Deci-AI/super-gradients/blob/master/notebooks/DEKR_PoseEstimationFineTuning.ipynb">
             <img src="./documentation/assets/SG_img/colab_logo.png" /> Pose Estimation Transfer Learning
         </a>
     </td>
